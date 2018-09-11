@@ -1,8 +1,9 @@
-use embedded_hal::blocking::spi::Write;
 use embedded_hal::blocking::delay::DelayMs;
+use embedded_hal::blocking::spi::Write;
 use embedded_hal::digital::OutputPin;
 
 use Pcd8544;
+use Pcd8544Base;
 
 pub struct Pcd8544Spi<SPI, DC, CS> {
     spi: SPI,
@@ -33,7 +34,7 @@ where
     }
 }
 
-impl<SPI, DC, CS> Pcd8544 for Pcd8544Spi<SPI, DC, CS>
+impl<SPI, DC, CS> Pcd8544Base for Pcd8544Spi<SPI, DC, CS>
 where
     SPI: Write<u8>,
     DC: OutputPin,
@@ -42,14 +43,14 @@ where
     fn command(&mut self, cmd: u8) {
         self.dc.set_low();
         self.cs.set_low();
-        self.spi.write(&[cmd]);
+        let _ = self.spi.write(&[cmd]);
         self.cs.set_high();
     }
 
     fn data(&mut self, data: &[u8]) {
         self.dc.set_high();
         self.cs.set_low();
-        self.spi.write(data);
+        let _ = self.spi.write(data);
         self.cs.set_high();
     }
 }

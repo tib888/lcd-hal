@@ -2,6 +2,7 @@ use embedded_hal::blocking::delay::DelayMs;
 use embedded_hal::digital::OutputPin;
 
 use Pcd8544;
+use Pcd8544Base;
 
 pub struct Pcd8544Gpio<CLK, DIN, DC, CS> {
     clk: CLK,
@@ -48,7 +49,7 @@ where
     }
 }
 
-impl<CLK, DIN, DC, CS> Pcd8544 for Pcd8544Gpio<CLK, DIN, DC, CS>
+impl<CLK, DIN, DC, CS> Pcd8544Base for Pcd8544Gpio<CLK, DIN, DC, CS>
 where
     CLK: OutputPin,
     DIN: OutputPin,
