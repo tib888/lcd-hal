@@ -26,7 +26,22 @@ pub enum Modes {
     Inverse = 0b0001101,
 }
 
-pub trait Pcd8544 {
+pub trait Display {
+    /// x must be 0..83
+    /// y must be 0..5
+    fn set_position(&mut self, x: u8, y: u8);
+
+    fn clear(&mut self);
+
+    fn print_char(&mut self, c: u8);
+
+    fn print(&mut self, s: &str);
+
+    fn get_pixel_resolution() -> (u8, u8);
+    fn get_char_resolution() -> (u8, u8);
+}
+
+pub trait Pcd8544: Display {
     /// voltage_coefficient < 90 => VLCD = 3.06 + voltage_coefficient * 0.06; VLCD must be less than 8.5V
     /// temp_coefficient < 4
     /// bias < 8 => Vbias = 1/(bias + 4) * VLCD
@@ -34,22 +49,51 @@ pub trait Pcd8544 {
 
     fn set_mode(&mut self, mode: Modes);
 
-    /// x must be 0..83
-    /// y must be 0..5
-    fn set_position(&mut self, x: u8, y: u8);
-
-    fn clear(&mut self);
-
     fn init(&mut self);
-
-    fn print_char(&mut self, c: u8);
-
-    fn print(&mut self, s: &str);
 
     // note: data direction is vertical: [1 2 3 4 5 6]
     // 1 3 5
     // 2 4 6
     fn draw_buffer(&mut self, buffer: &[u8; 6 * 84]);
+}
+
+impl<T: Pcd8544Base> Display for T {
+    /// x must be 0..83
+    /// y must be 0..5
+    fn set_position(&mut self, x: u8, y: u8) {
+        assert!(x < 84);
+        assert!(y < 6);
+        //self.command(0b0010_0000); // vertical_addressing = false
+        self.command(0b0100_0000 | y);
+        self.command(0b1000_0000 | x);
+    }
+
+    fn clear(&mut self) {
+        self.set_position(0, 0);
+        self.data(&[0u8; 6 * 84]);
+        self.set_position(0, 0);
+    }
+
+    fn print_char(&mut self, c: u8) {
+        let i = (c as usize) - 0x20;
+        //self.set_function_set(false, false, false); // horizontal addressing
+        self.data(&font::ASCII[i]);
+        self.data(&[0u8]);
+    }
+
+    fn print(&mut self, s: &str) {
+        for c in s.bytes() {
+            self.print_char(c);
+        }
+    }
+
+    fn get_pixel_resolution() -> (u8, u8) {
+        (84, 48)
+    }
+
+    fn get_char_resolution() -> (u8, u8) {
+        (14, 6)
+    }
 }
 
 impl<T: Pcd8544Base> Pcd8544 for T {
@@ -90,39 +134,10 @@ impl<T: Pcd8544Base> Pcd8544 for T {
         self.command(mode as u8); // set display control to normal mode: 0x0D for inverse
     }
 
-    /// x must be 0..83
-    /// y must be 0..5
-    fn set_position(&mut self, x: u8, y: u8) {
-        assert!(x < 84);
-        assert!(y < 6);
-        //self.command(0b0010_0000); // vertical_addressing = false
-        self.command(0b0100_0000 | y);
-        self.command(0b1000_0000 | x);
-    }
-
-    fn clear(&mut self) {
-        self.set_position(0, 0);
-        self.data(&[0u8; 6 * 84]);
-        self.set_position(0, 0);
-    }
-
     fn init(&mut self) {
         self.set_lcd_coefficients(56, 0, 4);
         self.set_mode(Modes::Normal);
         self.clear();
-    }
-
-    fn print_char(&mut self, c: u8) {
-        let i = (c as usize) - 0x20;
-        //self.set_function_set(false, false, false); // horizontal addressing
-        self.data(&font::ASCII[i]);
-        self.data(&[0u8]);
-    }
-
-    fn print(&mut self, s: &str) {
-        for c in s.bytes() {
-            self.print_char(c);
-        }
     }
 
     // note: data direction is vertical: [1 2 3 4 5 6]
