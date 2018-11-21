@@ -1,7 +1,12 @@
 [package]
-authors = ["Hannu Hartikainen <hannu.hartikainen@gmail.com>"]
-name = "pcd8544-hal"
-version = "0.2.0"
+authors = ["Hannu Hartikainen <hannu.hartikainen@gmail.com>", "Tibor Prokai <pro@sch.bme.hu>"]
+name = "lcd-hal"
+repository = "https://github.com/tib888/lcd-hal"
+description = "hardware abstraction layer for lcd displays: PCD8544 (Nokia 5510 display) and HX1230"
+version = "0.3.0"
+keywords = ["embedded", "lcd", "display", "hal"]
+categories = ["embedded", "hardware-support", "no-std"]
+license = "MIT"
 
 [dependencies]
 embedded-hal = "0.2.0"

@@ -2,8 +2,7 @@ use embedded_hal::blocking::delay::DelayMs;
 use embedded_hal::blocking::spi::Write;
 use embedded_hal::digital::OutputPin;
 
-use Pcd8544;
-use Pcd8544Base;
+use super::{Pcd8544, Pcd8544Base};
 
 pub struct Pcd8544Spi<SPI, DC, CS> {
     spi: SPI,
