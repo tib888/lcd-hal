@@ -108,7 +108,7 @@ where
 
     fn clear(&mut self) {
         self.set_position(0, 0);
-        self.data(&[0u8; 8 * 96]);
+        self.data(&[0u8; 9 * 96]); //clear the last half row too
         self.set_position(0, 0);
     }
 
