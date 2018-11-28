@@ -8,8 +8,6 @@
 
 pub mod gpio;
 
-use super::Display;
-
 pub trait Hx1230Base {
     fn command(&mut self, u8);
     fn data(&mut self, &[u8]);
@@ -22,7 +20,7 @@ pub enum Modes {
     Inverse,
 }
 
-pub trait Hx1230: Display {
+pub trait Hx1230 {
     /// contrast < 32
     fn set_contrast(&mut self, contrast: u8);
 

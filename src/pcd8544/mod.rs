@@ -1,7 +1,8 @@
 pub mod gpio;
 pub mod spi;
 
-use super::{font, Display};
+use super::font;
+use super::Display;
 
 pub trait Pcd8544Base {
     fn command(&mut self, u8);
@@ -15,7 +16,7 @@ pub enum Modes {
     Inverse = 0b0001101,
 }
 
-pub trait Pcd8544: Display {
+pub trait Pcd8544 {
     /// voltage_coefficient < 90 => VLCD = 3.06 + voltage_coefficient * 0.06; VLCD must be less than 8.5V
     /// temp_coefficient < 4
     /// bias < 8 => Vbias = 1/(bias + 4) * VLCD
@@ -31,7 +32,7 @@ pub trait Pcd8544: Display {
     fn draw_buffer(&mut self, buffer: &[u8; 6 * 84]);
 }
 
-impl<T: Pcd8544Base> Display for T {
+impl<T: Pcd8544Base> super::Display for T {
     /// x must be 0..83
     /// y must be 0..5
     fn set_position(&mut self, x: u8, y: u8) {
