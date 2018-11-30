@@ -118,17 +118,17 @@ where
         self.data(&[0u8]);
     }
 
-    fn print(&mut self, s: &str) {
-        for c in s.bytes() {
-            self.print_char(c);
+    fn print(&mut self, s: &[u8]) {
+        for c in s {
+            self.print_char(*c);
         }
     }
 
-    fn get_pixel_resolution() -> (u8, u8) {
+    fn get_pixel_resolution(&self) -> (u8, u8) {
         (96, 68)
     }
 
-    fn get_char_resolution() -> (u8, u8) {
+    fn get_char_resolution(&self) -> (u8, u8) {
         (16, 8)
     }
 }

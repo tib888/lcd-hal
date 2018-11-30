@@ -21,8 +21,11 @@ pub trait Display {
 
     fn print_char(&mut self, c: u8);
 
-    fn print(&mut self, s: &str);
+    fn print(&mut self, s: &[u8]);
 
-    fn get_pixel_resolution() -> (u8, u8);
-    fn get_char_resolution() -> (u8, u8);
+    /// returns (cols, rows)
+    fn get_pixel_resolution(&self) -> (u8, u8);
+
+    /// returns (cols, rows)
+    fn get_char_resolution(&self) -> (u8, u8);
 }

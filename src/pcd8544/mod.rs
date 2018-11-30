@@ -56,17 +56,17 @@ impl<T: Pcd8544Base> super::Display for T {
         self.data(&[0u8]);
     }
 
-    fn print(&mut self, s: &str) {
-        for c in s.bytes() {
-            self.print_char(c);
+    fn print(&mut self, s: &[u8]) {
+        for c in s {
+            self.print_char(*c);
         }
     }
 
-    fn get_pixel_resolution() -> (u8, u8) {
+    fn get_pixel_resolution(&self) -> (u8, u8) {
         (84, 48)
     }
 
-    fn get_char_resolution() -> (u8, u8) {
+    fn get_char_resolution(&self) -> (u8, u8) {
         (14, 6)
     }
 }
