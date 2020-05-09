@@ -9,8 +9,9 @@
 pub mod gpio;
 
 pub trait Hx1230Base {
-    fn command(&mut self, u8);
-    fn data(&mut self, &[u8]);
+    type Error;
+    fn command(&mut self, cmd: u8) -> Result<(), Self::Error>;
+    fn data(&mut self, data: &[u8]) -> Result<(), Self::Error>;
 }
 
 pub enum Modes {
@@ -21,15 +22,17 @@ pub enum Modes {
 }
 
 pub trait Hx1230 {
+    type Error;
+    
     /// contrast < 32
-    fn set_contrast(&mut self, contrast: u8);
+    fn set_contrast(&mut self, contrast: u8) -> Result<(), Self::Error>;
 
-    fn set_mode(&mut self, mode: Modes);
+    fn set_mode(&mut self, mode: Modes) -> Result<(), Self::Error>;
 
-    fn flip_horizontal(&mut self, flip: bool);
-    fn flip_vertical(&mut self, flip: bool);
+    fn flip_horizontal(&mut self, flip: bool) -> Result<(), Self::Error>;
+    fn flip_vertical(&mut self, flip: bool) -> Result<(), Self::Error>;
 
-    fn init(&mut self);
+    fn init(&mut self) -> Result<(), Self::Error>;
 
     // TODO
     // 8 lines of 8 pixels and 1 line of 4 pixels
