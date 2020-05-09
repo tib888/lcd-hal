@@ -17,7 +17,12 @@ pub trait Display {
 
     fn print_char(&mut self, c: u8) -> Result<(), Self::Error>;
 
-    fn print(&mut self, s: &[u8]) -> Result<(), Self::Error>;
+    fn print(&mut self, s: &[u8]) -> Result<(), Self::Error> {
+        for c in s {
+            self.print_char(*c)?;
+        }
+        Ok(())
+    }
 
     /// returns (cols, rows)
     fn get_pixel_resolution(&self) -> (u8, u8);

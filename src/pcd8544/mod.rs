@@ -35,7 +35,7 @@ pub trait Pcd8544 {
     fn draw_buffer(&mut self, buffer: &[u8; 6 * 84]) -> Result<(), Self::Error>;
 }
 
-impl<T: Pcd8544Base> super::Display for T {
+impl<T: Pcd8544Base> Display for T {
     type Error = T::Error;
     /// x must be 0..83
     /// y must be 0..5
@@ -59,13 +59,6 @@ impl<T: Pcd8544Base> super::Display for T {
         //self.set_function_set(false, false, false); // horizontal addressing
         self.data(&font::ASCII[i])?;
         self.data(&[0u8])?;
-        Ok(())
-    }
-
-    fn print(&mut self, s: &[u8]) -> Result<(), Self::Error> {
-        for c in s {
-            self.print_char(*c)?
-        }
         Ok(())
     }
 

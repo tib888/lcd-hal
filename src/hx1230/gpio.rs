@@ -3,8 +3,9 @@ use embedded_hal::{
     digital::v2::OutputPin
 };
 
-use super::super::{font, Display};
-use super::{Hx1230, Hx1230Base, Modes};
+use super::{Modes, Hx1230, Hx1230Base};
+
+use crate::{font, Display};
 
 pub struct Hx1230Gpio<CLK, DIN, CS> {
     clk: CLK, //clock
@@ -135,13 +136,6 @@ where
         Ok(())
     }
 
-    fn print(&mut self, s: &[u8]) -> Result<(), Self::Error> {
-        for c in s {
-            self.print_char(*c)?;
-        }
-        Ok(())
-    }
-
     fn get_pixel_resolution(&self) -> (u8, u8) {
         (96, 68)
     }
@@ -151,13 +145,9 @@ where
     }
 }
 
-impl<CLK, DIN, CS, E> Hx1230 for Hx1230Gpio<CLK, DIN, CS>
-where
-    CLK: OutputPin<Error = E>,
-    DIN: OutputPin<Error = E>,
-    CS: OutputPin<Error = E>,
-{
-    type Error = E;
+impl<T: Hx1230Base> Hx1230 for T {
+    type Error = T::Error;
+
     /// contrast < 32
     fn set_contrast(&mut self, contrast: u8) -> Result<(), Self::Error> {
         assert!(contrast < 32);
@@ -208,6 +198,6 @@ where
         self.set_mode(Modes::Normal)?; //0xa6, 0xa4
         self.command(0b1010_1111)?; //1010111* enable display
         self.command(0b0100_0000)?; //01****** set scan start line
-        self.clear() //this is included in clear: self.set_position(0, 0); 0xb0, 0x10, 0x00
+        Ok(())
     }
 }
